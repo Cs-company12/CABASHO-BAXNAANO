@@ -188,7 +188,7 @@ footer{background:var(--dark);color:#fff;text-align:center;padding:25px;margin-t
 
 <!-- HEADER -->
 <header>
-  <h1>📢 System Cabasho</h1>
+  <h1>📢 CABASHO & TALO</h1>
   <p>Baxnaano Hospital - Bukaanka waxay soo gudbin karaan cabashadooda</p>
 </header>
 <CENTER>
@@ -212,13 +212,25 @@ footer{background:var(--dark);color:#fff;text-align:center;padding:25px;margin-t
         </div>
         <button class="btn btn-primary btn-block">Soo Gudbi Cabasho</button>
       </div>
+       
        <div class="grid fade-in">
-      <div class="card" onclick="quickSubmit('Cashier')">
+      <div class="card" onclick="quickSubmit('NADAFADA')">
         <div class="card-header">
-          <div class="card-icon" style="background:#f3e5f5">💰</div>
+          <div class="card-icon" style="background:#f3e5f5">🧤</div>
           <div>
-            <h3>Cashier shiftiga galabta</h3>
-            <p style="color:#666;font-size:14px">Lacag bixinta, iyo xisaabta</p>
+            <h3>NADAFADA </h3>
+            <p style="color:#666;font-size:14px"> ISBTILKA NADAFADA </p>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block">Soo Gudbi Cabasho</button>
+      </div>
+       <div class="grid fade-in">
+      <div class="card" onclick="quickSubmit('MAMULKA')">
+        <div class="card-header">
+          <div class="card-icon" style="background:#f3e5f5">🧑‍💼</div>
+          <div>
+            <h3>QEYBTA MAAMULKA </h3>
+            <p style="color:#666;font-size:14px">MAMULKA ISBTILKA </p>
           </div>
         </div>
         <button class="btn btn-primary btn-block">Soo Gudbi Cabasho</button>
@@ -276,7 +288,7 @@ footer{background:var(--dark);color:#fff;text-align:center;padding:25px;margin-t
 <section id="submit" class="section">
   <div class="container">
     <h2 class="section-title">📝 Soo Gudbi Cabashadaada</h2>
-    <p class="section-subtitle">Fadlan buuxi foomka si sax ah</p>
+    <p class="section-subtitle">FADLAN NALA WADAAG CABASHADAADA, TALADAAADA AMA MAHADCELINTADA.</p>
     
     <div class="form-container fade-in">
       <div class="alert alert-success" id="submitSuccess">✅ Cabashadaadu waa la qabtay!</div>
@@ -284,21 +296,13 @@ footer{background:var(--dark);color:#fff;text-align:center;padding:25px;margin-t
       
       <form id="complaintForm" onsubmit="submitComplaint(event)">
         <div class="form-group">
-          <label>Magacaaga *</label>
-          <input type="text" id="compName" required placeholder="Magacaaga buuxa">
-        </div>
-        
-        <div class="form-group">
-          <label>Telefoonkaaga *</label>
-          <input type="tel" id="compPhone" required placeholder="061xxxxxxx">
-        </div>
-        
-        <div class="form-group">
           <label>Qeybta Cabashada *</label>
           <select id="compDept" required>
             <option value="">Dooro qeybta</option>
             <option value="Cashier">💰 Cashier shiftiga subaxdi</option>
             <option value="Cashier">💰 Cashier shiftiga galabta</option>
+            <option value="NADAFADA">🧤 NADAFADA HOSPITALKA</option>
+            <option value="MAMULKA">🧑‍💼 QEYBTA MAAMULKA </option>
             <option value="Laboratory">🧪 Laboratory</option>
             <option value="Pharmacy">💊 Pharmacy</option>
             <option value="Emergency">🚑 Emergency</option>
@@ -308,13 +312,8 @@ footer{background:var(--dark);color:#fff;text-align:center;padding:25px;margin-t
         </div>
         
         <div class="form-group">
-          <label>Mowduuca Cabashada *</label>
-          <input type="text" id="compSubject" required placeholder="Tusaale: Adeegka degdegga ah ma shaqaynayo">
-        </div>
-        
-        <div class="form-group">
-          <label>Faahfaahin Buuxda *</label>
-          <textarea id="compBody" required placeholder="Sheeg si faahfaahsan waxa dhacay, goorta, iyo cid ku saabsan tahay..."></textarea>
+          <label>KUQOOR ITA CABASHADAADA *</label>
+          <textarea id="compBody" required placeholder="cabashadad kuqor inta"></textarea>
         </div>
         
         
@@ -385,30 +384,27 @@ function toggleMobileMenu(){
 function quickSubmit(dept){
   showSection('submit');
   document.getElementById('compDept').value = dept;
-  document.getElementById('compSubject').focus();
+  document.getElementById('compBody').focus();
 }
 
 function submitComplaint(e){
   e.preventDefault();
   
-  const name = document.getElementById('compName').value.trim();
-  const phone = document.getElementById('compPhone').value.trim();
   const dept = document.getElementById('compDept').value;
-  const subject = document.getElementById('compSubject').value.trim();
   const body = document.getElementById('compBody').value.trim();
   
-  if(!name || !phone || !dept || !subject || !body){
+  if(!dept || !body){
     showAlert('submitError');
     return;
   }
   
   const complaint = {
     id: generateId(),
-    name,
-    phone,
+    name: 'Bukaan',
+    phone: '',
+    anonymous: true,
     role: 'Bukaan',
     dept,
-    subject,
     body,
     status: 'pending',
     createdAt: new Date().toISOString(),
@@ -425,7 +421,7 @@ function submitComplaint(e){
   document.getElementById('complaintForm').reset();
   
   // Send WhatsApp notification
-  const msg = encodeURIComponent(`*Cabasho Cusub - Baxnaano Hospital*\n\nMagac: ${name}\nTelefoon: ${phone}\nQeyb: ${dept}\nMowduuc: ${subject}\nFaahfaahin: ${body}`);
+  const msg = encodeURIComponent(`*Cabasho Cusub - Baxnaano Hospital*\n\nQeyb: ${dept}\nFaahfaahin: ${body}`);
   window.open(`https://wa.me/252613490055?text=${msg}`, '_blank');
 }
 
@@ -443,7 +439,7 @@ function renderManage(){
   if(search) complaints = complaints.filter(c => 
     c.id.toLowerCase().includes(search) || 
     c.name.toLowerCase().includes(search) || 
-    c.subject.toLowerCase().includes(search)
+    (c.subject || '').toLowerCase().includes(search)
   );
   
   // Update stats
@@ -464,7 +460,7 @@ function renderManage(){
       <td><strong>${c.id}</strong></td>
       <td>${c.anonymous ? '👤 Anonymous' : c.name}<br><small style="color:#999">${c.role}</small></td>
       <td>${c.dept}</td>
-      <td>${c.subject}</td>
+      <td>${c.subject || ''}</td>
       <td><span style="color:${c.priority === 'critical' ? '#333' : c.priority === 'high' ? 'var(--danger)' : c.priority === 'medium' ? 'var(--warning)' : 'var(--success)'};font-weight:bold">● ${c.priority.toUpperCase()}</span></td>
       <td>${new Date(c.createdAt).toLocaleDateString()}</td>
       <td>
@@ -505,12 +501,12 @@ function viewDetail(id){
     <div style="display:grid;gap:12px">
       <div style="background:#f8f9fa;padding:15px;border-radius:10px">
         <p><strong>Magac:</strong> ${c.name}</p>
-        <p><strong>Telefoon:</strong> ${c.phone}</p>
+        ${c.phone ? `<p><strong>Telefoon:</strong> ${c.phone}</p>` : ''}
       </div>
       <div style="background:#f8f9fa;padding:15px;border-radius:10px">
         <p><strong>Qeybta:</strong> ${c.dept}</p>
         <p><strong>Daraja:</strong> ${c.priority.toUpperCase()}</p>
-        <p><strong>Mowduuc:</strong> ${c.subject}</p>
+        ${c.subject ? `<p><strong>Mowduuc:</strong> ${c.subject}</p>` : ''}
       </div>
       <div style="background:#fff3cd;padding:15px;border-radius:10px">
         <p><strong>Cabashada:</strong></p>
@@ -518,10 +514,10 @@ function viewDetail(id){
       </div>
       ${c.notes.length > 0 ? `<div style="background:#e3f2fd;padding:15px;border-radius:10px"><p><strong>Jawaabaha Maamulka:</strong></p>${c.notes.map(n => `<p style="margin-top:8px"><small style="color:#666">${new Date(n.date).toLocaleString()}</small><br>${n.text}</p>`).join('')}</div>` : ''}
     </div>
-    <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+    ${c.phone ? `<div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
       <a href="tel:${c.phone}" class="btn btn-primary">📞 Wac</a>
       <a href="https://wa.me/252${c.phone.replace(/^0/,'')}" target="_blank" class="btn btn-success">💬 WhatsApp</a>
-    </div>
+    </div>` : ''}
   `;
   document.getElementById('detailModal').style.display = 'flex';
 }
@@ -598,7 +594,7 @@ function renderReports(){
       <td>${c.id}</td>
       <td>${c.anonymous ? 'Anonymous' : c.name}</td>
       <td>${c.dept}</td>
-      <td>${c.subject}</td>
+      <td>${c.subject || ''}</td>
       <td>${c.priority.toUpperCase()}</td>
       <td><span class="badge badge-${c.status === 'pending' ? 'pending' : c.status === 'progress' ? 'progress' : c.status === 'resolved' ? 'resolved' : 'rejected'}">${c.status}</span></td>
       <td>${new Date(c.createdAt).toLocaleDateString()}</td>
