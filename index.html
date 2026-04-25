@@ -179,8 +179,7 @@ footer{background:var(--dark);color:#fff;text-align:center;padding:25px;margin-t
   <div class="container nav-content">
     <div class="logo">🏥 Baxnaano Hospital</div>
     <ul class="nav-links">
-      <li><a href="#" onclick="showSection('home')" class="active">🏠 Home</a></li>
-      <li><a href="#" onclick="showSection('submit')">📝 Soo Gudbi</a></li>
+      <li><a href="#" onclick="showSection('submit')" class="active">📝 Soo Gudbi</a></li>
     </ul>
     <div class="mobile-menu" onclick="toggleMobileMenu()">☰</div>
   </div>
@@ -195,97 +194,8 @@ footer{background:var(--dark);color:#fff;text-align:center;padding:25px;margin-t
  <img src="https://github.com/Cs-company12/CABASHO-BAXNAANO/blob/main/images.png?raw=true" width="200" height="90">
 </CENTER>
 
-  <div class="container">
-    <section id="home" class="section active">
-      <h2 class="section-title">Qeybaha Hospital-ka</h2>
-      <p class="section-subtitle">Dooro qeybta aad cabasho u gudbinayso</p>
-      <hr style="margin:25px auto 30px;max-width:600px;border:none;height:1px;background:rgba(47,128,237,0.18);">
-    
-    <div class="grid fade-in">
-      <div class="card" onclick="quickSubmit('Cashier')">
-        <div class="card-header">
-          <div class="card-icon" style="background:#f3e5f5">💰</div>
-          <div>
-            <h3>Cashier shiftiga subaxdi</h3>
-            <p style="color:#666;font-size:14px">Lacag bixinta, iyo xisaabta</p>
-          </div>
-        </div>
-        <button class="btn btn-primary btn-block">Soo Gudbi Cabasho</button>
-      </div>
-       
-       <div class="grid fade-in">
-      <div class="card" onclick="quickSubmit('NADAFADA')">
-        <div class="card-header">
-          <div class="card-icon" style="background:#f3e5f5">🧤</div>
-          <div>
-            <h3>NADAFADA </h3>
-            <p style="color:#666;font-size:14px"> ISBTILKA NADAFADA </p>
-          </div>
-        </div>
-        <button class="btn btn-primary btn-block">Soo Gudbi Cabasho</button>
-      </div>
-       <div class="grid fade-in">
-      <div class="card" onclick="quickSubmit('MAMULKA')">
-        <div class="card-header">
-          <div class="card-icon" style="background:#f3e5f5">🧑‍💼</div>
-          <div>
-            <h3>QEYBTA MAAMULKA </h3>
-            <p style="color:#666;font-size:14px">MAMULKA ISBTILKA </p>
-          </div>
-        </div>
-        <button class="btn btn-primary btn-block">Soo Gudbi Cabasho</button>
-      </div>
-      
-      <div class="card" onclick="quickSubmit('Laboratory')">
-        <div class="card-header">
-          <div class="card-icon" style="background:#e8f5e9">🧪</div>
-          <div>
-            <h3>Laboratory</h3>
-            <p style="color:#666;font-size:14px">Dhiig qadista iyo natiijooyinka</p>
-          </div>
-        </div>
-        <button class="btn btn-primary btn-block">Soo Gudbi Cabasho</button>
-      </div>
-      
-      <div class="card" onclick="quickSubmit('Pharmacy')">
-        <div class="card-header">
-          <div class="card-icon" style="background:#fff3e0">💊</div>
-          <div>
-            <h3>Pharmacy</h3>
-            <p style="color:#666;font-size:14px">Dawooyinka, qiyaasta, iyo tayo</p>
-          </div>
-        </div>
-        <button class="btn btn-primary btn-block">Soo Gudbi Cabasho</button>
-      </div>
-      
-      <div class="card" onclick="quickSubmit('Emergency')">
-        <div class="card-header">
-          <div class="card-icon" style="background:#ffebee">🚑</div>
-          <div>
-            <h3>Emergency</h3>
-            <p style="color:#666;font-size:14px">Adeeg degdeg ah 24/7</p>
-          </div>
-        </div>
-        <button class="btn btn-primary btn-block">Soo Gudbi Cabasho</button>
-      </div>
-      
-      <div class="card" onclick="quickSubmit('HR / Shaqaalaha')">
-        <div class="card-header">
-          <div class="card-icon" style="background:#f1f8e9">👥</div>
-          <div>
-            <h3>HR / Shaqaalaha</h3>
-            <p style="color:#666;font-size:14px">Dhibaatooyinka shaqaalaha iyo xiriirka</p>
-          </div>
-        </div>
-        <button class="btn btn-primary btn-block">Soo Gudbi Cabasho</button>
-      </div>
-    </div>
-
-  </div>
-</section>
-
 <!-- SUBMIT COMPLAINT SECTION -->
-<section id="submit" class="section">
+<section id="submit" class="section active">
   <div class="container">
     <h2 class="section-title">📝 Soo Gudbi Cabashadaada</h2>
     <p class="section-subtitle">FADLAN NALA WADAAG CABASHADAADA, TALADAAADA AMA MAHADCELINTADA.</p>
@@ -296,7 +206,7 @@ footer{background:var(--dark);color:#fff;text-align:center;padding:25px;margin-t
       
       <form id="complaintForm" onsubmit="submitComplaint(event)">
         <div class="form-group">
-          <label>Qeybta Cabashada *</label>
+          <label> DOORO QAYBTA CABASHADA AAD KAGUDBINESID *</label>
           <select id="compDept" required>
             <option value="">Dooro qeybta</option>
             <option value="Cashier">💰 Cashier shiftiga subaxdi</option>
@@ -422,7 +332,10 @@ function submitComplaint(e){
   
   // Send WhatsApp notification
   const msg = encodeURIComponent(`*Cabasho Cusub - Baxnaano Hospital*\n\nQeyb: ${dept}\nFaahfaahin: ${body}`);
-  window.open(`https://wa.me/252613490055?text=${msg}`, '_blank');
+  const whatsappIntent = `intent://send?phone=252613490055&text=${msg}#Intent;package=com.whatsapp;scheme=whatsapp;end`;
+  const whatsappWeb = `https://wa.me/252613490055?text=${msg}`;
+  window.location.href = whatsappIntent;
+  setTimeout(() => window.location.href = whatsappWeb, 1500);
 }
 
 // ================= MANAGEMENT =================
@@ -516,7 +429,7 @@ function viewDetail(id){
     </div>
     ${c.phone ? `<div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
       <a href="tel:${c.phone}" class="btn btn-primary">📞 Wac</a>
-      <a href="https://wa.me/252${c.phone.replace(/^0/,'')}" target="_blank" class="btn btn-success">💬 WhatsApp</a>
+      <a href="intent://send?phone=252${c.phone.replace(/^0/,'')}&text=Asc%20Baxnaano%20Hospital%2C%20waxaan%20rabaa%20inaaan%20ka%20war%20hayo%20cabasho.#Intent;package=com.whatsapp;scheme=whatsapp;end" class="btn btn-success">💬 WhatsApp</a>
     </div>` : ''}
   `;
   document.getElementById('detailModal').style.display = 'flex';
@@ -637,7 +550,13 @@ function showAlert(id){
 
 function openWhatsApp(){
   const msg = encodeURIComponent("Asc Baxnaano Hospital, waxaan rabaa inaan ka war hayo cabasho.");
-  window.open(`https://wa.me/252613490055?text=${msg}`, '_blank');
+  const whatsappIntent = `intent://send?phone=252613490055&text=${msg}#Intent;package=com.whatsapp;scheme=whatsapp;end`;
+  const whatsappWeb = `https://wa.me/252613490055?text=${msg}`;
+
+  window.location.href = whatsappIntent;
+  setTimeout(() => {
+    window.location.href = whatsappWeb;
+  }, 1500);
 }
 </script>
 
