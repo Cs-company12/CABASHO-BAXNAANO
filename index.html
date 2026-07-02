@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#059669">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="الصلاة الإبراهيمية">
+<meta name="mobile-web-app-capable" content="yes">
+<title>الصلاة الإبراهيمية</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    font-family:'Cairo',sans-serif;
+    background:linear-gradient(to bottom,#ecfdf5,#f0fdfa,#d1fae5);
+    min-height:100vh; display:flex; flex-direction:column; align-items:center;
+    color:#1f2937; user-select:none; overflow-x:hidden;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .wrap { width:100%; max-width:440px; padding:0 16px; }
+  header { text-align:center; padding:28px 0 12px; }
+  header h1 { font-size:26px; font-weight:700; color:#065f46; display:flex; align-items:center; justify-content:center; gap:8px; }
+  header p { font-size:14px; color:#059669; margin-top:2px; }
+
+  /* iOS install banner */
+  .ios-banner {
+    display:none; align-items:center; gap:10px; background:#fff; border:1px solid #d1fae5;
+    border-radius:16px; padding:12px 14px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    font-size:13px; color:#374151;
+  }
+  .ios-banner.show { display:flex; }
+  .ios-banner .ic { font-size:22px; flex-shrink:0; }
+  .ios-banner b { color:#047857; }
+  .ios-banner .close { margin-inline-start:auto; cursor:pointer; color:#9ca3af; font-size:18px; padding:2px 6px; }
+
+  .tabs { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:14px 0; }
+  .tab {
+    position:relative; border:none; cursor:pointer; border-radius:18px; padding:12px 4px;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    background:rgba(255,255,255,0.7); color:#4b5563; box-shadow:0 1px 3px rgba(0,0,0,0.06);
+    transition:all .3s; font-family:'Cairo',sans-serif;
+  }
+  .tab .ico { font-size:22px; }
+  .tab .nm { font-size:12px; font-weight:600; }
+  .tab .ct { font-size:10px; opacity:.85; }
+  .tab.active { color:#fff; transform:scale(1.05); box-shadow:0 6px 14px rgba(0,0,0,0.18); }
+  .tab.active.morning { background:linear-gradient(135deg,#fbbf24,#f97316); }
+  .tab.active.afternoon { background:linear-gradient(135deg,#38bdf8,#06b6d4); }
+  .tab.active.night { background:linear-gradient(135deg,#6366f1,#9333ea); }
+  .badge { position:absolute; top:-5px; right:-5px; background:#22c55e; border:2px solid #fff; border-radius:50%; width:20px; height:20px; display:none; align-items:center; justify-content:center; color:#fff; font-size:12px; font-weight:700; }
+  .badge.show { display:flex; }
+  .dua {
+    border-radius:24px; padding:18px; text-align:center; margin-bottom:18px;
+    background:rgba(255,255,255,0.75); box-shadow:inset 0 2px 8px rgba(0,0,0,0.05); border:1px solid #fff;
+  }
+  .dua p { font-family:'Amiri',serif; font-size:19px; line-height:2.1; color:#374151; }
+  .counter-area { display:flex; justify-content:center; align-items:center; position:relative; margin-bottom:6px; }
+  svg.ring { width:290px; height:290px; max-width:80vw; }
+  .track { fill:none; stroke:#e2e8f0; stroke-width:14; }
+  .prog { fill:none; stroke-width:14; stroke-linecap:round; transition:stroke-dashoffset .4s ease, stroke .3s; }
+  .tap-btn {
+    position:absolute; border:none; cursor:pointer; border-radius:50%; width:200px; height:200px; max-width:56vw; max-height:56vw;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    color:#fff; box-shadow:0 10px 26px rgba(0,0,0,0.22); transition:transform .12s; font-family:'Cairo',sans-serif;
+  }
+  .tap-btn.morning { background:linear-gradient(135deg,#fbbf24,#f97316); }
+  .tap-btn.afternoon { background:linear-gradient(135deg,#38bdf8,#06b6d4); }
+  .tap-btn.night { background:linear-gradient(135deg,#6366f1,#9333ea); }
+  .tap-btn:active { transform:scale(0.94); }
+  .tap-btn.press { transform:scale(0.94); }
+  .num { font-size:64px; font-weight:700; line-height:1; }
+  .of { font-size:14px; opacity:.9; margin-top:4px; }
+  .hint { font-size:11px; opacity:.8; margin-top:8px; }
+  .done-check { font-size:52px; }
+  .done-txt { font-size:19px; font-weight:700; margin-top:4px; }
+  .reset {
+    display:flex; align-items:center; gap:6px; margin:10px auto 22px; cursor:pointer; border:none;
+    background:rgba(255,255,255,0.8); color:#4b5563; padding:9px 20px; border-radius:99px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.08); font-family:'Cairo',sans-serif; font-size:14px; font-weight:600;
+  }
+  .total { border-radius:18px; background:rgba(255,255,255,0.7); box-shadow:0 1px 3px rgba(0,0,0,0.06); padding:14px; text-align:center; font-size:14px; margin-bottom:14px; }
+  .total b { color:#047857; }
+  .streak { font-size:12px; color:#6b7280; text-align:center; margin-bottom:16px; }
+
+  .row-actions { display:flex; gap:10px; margin-bottom:22px; }
+  .action-btn {
+    flex:1; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; border:none;
+    background:rgba(255,255,255,0.8); color:#4b5563; padding:11px 10px; border-radius:14px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.08); font-family:'Cairo',sans-serif; font-size:13px; font-weight:600;
+  }
+
+  #install {
+    display:none; width:100%; margin:0 auto 14px; cursor:pointer; border:none;
+    background:linear-gradient(135deg,#059669,#0d9488); color:#fff; padding:11px 22px; border-radius:99px;
+    box-shadow:0 4px 12px rgba(5,150,105,0.4); font-family:'Cairo',sans-serif; font-size:14px; font-weight:700;
+  }
+
+  /* Reminder card */
+  .card-box {
+    background:rgba(255,255,255,0.75); border-radius:20px; padding:16px; margin-bottom:16px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.06);
+  }
+  .card-title { font-size:14px; font-weight:700; color:#065f46; margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+  .rem-row { display:flex; align-items:center; gap:10px; padding:8px 0; border-top:1px solid rgba(0,0,0,0.05); }
+  .rem-row:first-of-type { border-top:none; }
+  .rem-name { flex:0 0 74px; font-size:13px; font-weight:600; color:#374151; }
+  .rem-time { flex:1; background:rgba(0,0,0,0.03); border:1px solid rgba(0,0,0,0.08); border-radius:10px; padding:7px 8px; font-size:13px; font-family:'Cairo',sans-serif; }
+  .switch-sm { position:relative; width:40px; height:23px; flex-shrink:0; }
+  .switch-sm input { opacity:0; width:0; height:0; }
+  .slider-sm { position:absolute; inset:0; background:#e5e7eb; border-radius:20px; cursor:pointer; transition:.2s; }
+  .slider-sm::before { content:""; position:absolute; width:17px; height:17px; right:3px; top:3px; background:#fff; border-radius:50%; transition:.2s; box-shadow:0 1px 2px rgba(0,0,0,0.2); }
+  input:checked + .slider-sm { background:#10b981; }
+  input:checked + .slider-sm::before { transform:translateX(-17px); }
+  .save-rem {
+    width:100%; margin-top:12px; cursor:pointer; border:none; background:#059669; color:#fff;
+    padding:10px; border-radius:12px; font-family:'Cairo',sans-serif; font-size:13px; font-weight:700;
+  }
+  .rem-note { font-size:11px; color:#9ca3af; margin-top:10px; line-height:1.6; }
+
+  /* History modal */
+  .modal-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.45); display:none; align-items:flex-end; justify-content:center; z-index:60;
+  }
+  .modal-overlay.show { display:flex; }
+  .modal-sheet {
+    background:#fff; width:100%; max-width:440px; border-radius:24px 24px 0 0; padding:20px 18px calc(20px + env(safe-area-inset-bottom));
+    max-height:78vh; overflow-y:auto; animation:slideUp .3s ease;
+  }
+  @keyframes slideUp { from{transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;} }
+  .modal-head { display:flex; align-items:center; margin-bottom:14px; }
+  .modal-head h2 { font-size:17px; color:#065f46; }
+  .modal-head .x { margin-inline-start:auto; cursor:pointer; font-size:20px; color:#9ca3af; padding:4px 8px; }
+  .hist-item { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid #f3f4f6; }
+  .hist-date { flex:0 0 92px; font-size:12px; color:#6b7280; }
+  .hist-sessions { flex:1; display:flex; gap:6px; }
+  .hist-chip { font-size:11px; padding:4px 8px; border-radius:99px; background:#f3f4f6; color:#9ca3af; }
+  .hist-chip.done { background:#d1fae5; color:#047857; font-weight:700; }
+  .hist-empty { text-align:center; color:#9ca3af; font-size:13px; padding:30px 0; }
+
+  .celebrate {
+    position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:50; pointer-events:none;
+  }
+  .celebrate.show { display:flex; }
+  .celebrate .card {
+    background:rgba(255,255,255,0.97); border-radius:26px; box-shadow:0 20px 50px rgba(0,0,0,0.25);
+    padding:26px 36px; text-align:center; animation:pop .5s ease;
+  }
+  @keyframes pop { 0%{transform:scale(0.6);opacity:0;} 60%{transform:scale(1.08);} 100%{transform:scale(1);opacity:1;} }
+  .celebrate .emo { font-size:52px; }
+  .celebrate .t1 { color:#047857; font-weight:700; font-size:20px; margin-top:6px; }
+  .celebrate .t2 { color:#6b7280; font-size:14px; margin-top:2px; }
+
+  .toast {
+    position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px);
+    background:#111827; border:1px solid rgba(255,255,255,0.1); color:#fff;
+    padding:10px 18px; border-radius:30px; font-size:13px;
+    opacity:0; transition:.25s ease; pointer-events:none; z-index:70;
+  }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>✨ الصلاة الإبراهيمية ✨</h1>
+      <p>اللهم صلِّ وسلِّم على نبينا محمد ﷺ</p>
+    </header>
+
+    <div class="ios-banner" id="iosBanner">
+      <span class="ic">📲</span>
+      <span><b>Ku dar Home Screen-ka:</b> taabo share <b>⬆️</b> ka dibna dooro "Add to Home Screen".</span>
+      <span class="close" id="iosBannerClose">✕</span>
+    </div>
+
+    <button id="install">📲 تثبيت التطبيق على جهازك</button>
+
+    <div class="tabs" id="tabs"></div>
+
+    <div class="dua">
+      <p>اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ، وَعَلَىٰ آلِ مُحَمَّدٍ، كَمَا صَلَّيْتَ عَلَىٰ إِبْرَاهِيمَ، وَعَلَىٰ آلِ إِبْرَاهِيمَ، إِنَّكَ حَمِيدٌ مَجِيدٌ. اللَّهُمَّ بَارِكْ عَلَىٰ مُحَمَّدٍ، وَعَلَىٰ آلِ مُحَمَّدٍ، كَمَا بَارَكْتَ عَلَىٰ إِبْرَاهِيمَ، وَعَلَىٰ آلِ إِبْرَاهِيمَ، إِنَّكَ حَمِيدٌ مَجِيدٌ</p>
+    </div>
+
+    <div class="counter-area">
+      <svg class="ring" viewBox="0 0 300 300">
+        <circle class="track" cx="150" cy="150" r="130"></circle>
+        <circle class="prog" id="prog" cx="150" cy="150" r="130" transform="rotate(-90 150 150)"></circle>
+      </svg>
+      <button class="tap-btn morning" id="tapBtn" onclick="tap()"></button>
+    </div>
+
+    <button class="reset" onclick="resetOne()">↺ إعادة</button>
+
+    <div class="total">المجموع اليوم: <b id="total">0</b> صلاة</div>
+    <div class="streak" id="streak"></div>
+
+    <div class="row-actions">
+      <button class="action-btn" id="historyBtn">📜 Taariikhda</button>
+      <button class="action-btn" id="reminderScrollBtn">🔔 Xasuusinta</button>
+    </div>
+
+    <div class="card-box" id="reminderCard">
+      <div class="card-title">🔔 Xasuusinta Maalinlaha ah</div>
+
+      <div class="rem-row">
+        <span class="rem-name">🌅 Subax</span>
+        <input type="time" class="rem-time" id="time-morning" value="05:30">
+        <label class="switch-sm"><input type="checkbox" id="en-morning"><span class="slider-sm"></span></label>
+      </div>
+      <div class="rem-row">
+        <span class="rem-name">☀️ Casar</span>
+        <input type="time" class="rem-time" id="time-afternoon" value="16:00">
+        <label class="switch-sm"><input type="checkbox" id="en-afternoon"><span class="slider-sm"></span></label>
+      </div>
+      <div class="rem-row">
+        <span class="rem-name">🌙 Habeen</span>
+        <input type="time" class="rem-time" id="time-night" value="21:30">
+        <label class="switch-sm"><input type="checkbox" id="en-night"><span class="slider-sm"></span></label>
+      </div>
+
+      <button class="save-rem" id="saveRem">Kaydi Xasuusinta</button>
+      <div class="rem-note">
+        Marka la gaadho waqtiga, waxaad heli doontaa ogeysiis + cod xasuusin ah. iOS/Safari: si xasuusintu ugu shaqeyso xitaa marka app-ku xidhan yahay, ku dar Home Screen-ka (⬆️ → Add to Home Screen) — file kali ahi background push si buuxda uma bixin karo iyada oo aan server lahayn.
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="historyModal">
+    <div class="modal-sheet">
+      <div class="modal-head">
+        <h2>📜 Taariikhda Salawaatka</h2>
+        <span class="x" id="historyClose">✕</span>
+      </div>
+      <div id="historyList"></div>
+    </div>
+  </div>
+
+  <div class="celebrate" id="celebrate">
+    <div class="card">
+      <div class="emo">🌸</div>
+      <div class="t1" id="celTitle"></div>
+      <div class="t2">تقبّل الله منك</div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+  const SESSIONS = [
+    { id:'morning',   name:'الصباح',    label:'Subax',  target:100, ico:'🌅' },
+    { id:'afternoon', name:'المساء',    label:'Casar',  target:100, ico:'☀️' },
+    { id:'night',     name:'قبل النوم', label:'Habeen', target:300, ico:'🌙' },
+  ];
+  const CIRC = 2 * Math.PI * 130;
+
+  let state = { date:'', counts:{morning:0,afternoon:0,night:0}, streak:0 };
+  let active = 'morning';
+
+  function todayKey(){ return new Date().toISOString().slice(0,10); }
+
+  function loadHistory(){
+    try { return JSON.parse(localStorage.getItem('salawat_history') || '[]'); } catch(e){ return []; }
+  }
+  function pushHistory(prevDate, counts){
+    if(!prevDate) return;
+    const hist = loadHistory();
+    hist.unshift({ date:prevDate, counts, completed: counts.morning>=100 && counts.afternoon>=100 && counts.night>=300 });
+    localStorage.setItem('salawat_history', JSON.stringify(hist.slice(0,60)));
+  }
+
+  function load(){
+    try {
+      const raw = localStorage.getItem('salawat');
+      if(raw){ state = JSON.parse(raw); }
+    } catch(e){}
+    const t = todayKey();
+    if(state.date !== t){
+      if(state.date){ pushHistory(state.date, state.counts); }
+      const allDone = state.date && state.counts.morning>=100 && state.counts.afternoon>=100 && state.counts.night>=300;
+      state = { date:t, counts:{morning:0,afternoon:0,night:0}, streak: allDone ? (state.streak||0) : 0 };
+      save();
+    }
+  }
+  function save(){ try{ localStorage.setItem('salawat', JSON.stringify(state)); }catch(e){} }
+
+  function buildTabs(){
+    const el = document.getElementById('tabs');
+    el.innerHTML = '';
+    SESSIONS.forEach(s => {
+      const c = state.counts[s.id];
+      const done = c >= s.target;
+      const b = document.createElement('button');
+      b.className = 'tab ' + s.id + (s.id===active?' active':'');
+      b.onclick = () => { active = s.id; render(); };
+      b.innerHTML = `<span class="ico">${s.ico}</span><span class="nm">${s.name}</span><span class="ct">${c}/${s.target}</span><span class="badge ${done?'show':''}">✓</span>`;
+      el.appendChild(b);
+    });
+  }
+
+  function render(){
+    buildTabs();
+    const s = SESSIONS.find(x=>x.id===active);
+    const c = state.counts[active];
+    const done = c >= s.target;
+    const prog = Math.min(c/s.target,1);
+
+    const ring = document.getElementById('prog');
+    ring.style.stroke = getColor(active);
+    ring.style.strokeDasharray = CIRC;
+    ring.style.strokeDashoffset = CIRC*(1-prog);
+
+    const btn = document.getElementById('tapBtn');
+    btn.className = 'tap-btn ' + active;
+    if(done){
+      btn.innerHTML = `<span class="done-check">✓</span><span class="done-txt">تم بحمد الله</span>`;
+    } else {
+      btn.innerHTML = `<span class="num">${c}</span><span class="of">من ${s.target}</span><span class="hint">اضغط للتسبيح</span>`;
+    }
+
+    const total = state.counts.morning+state.counts.afternoon+state.counts.night;
+    document.getElementById('total').textContent = total;
+    document.getElementById('streak').textContent = state.streak>0 ? `🔥 سلسلة الإتمام: ${state.streak} يوم` : '';
+  }
+
+  function getColor(id){
+    if(id==='morning') return '#f59e0b';
+    if(id==='afternoon') return '#0ea5e9';
+    return '#6366f1';
+  }
+
+  function tap(){
+    const s = SESSIONS.find(x=>x.id===active);
+    if(state.counts[active] >= s.target) return;
+    state.counts[active]++;
+    if(navigator.vibrate) navigator.vibrate(15);
+    const btn = document.getElementById('tapBtn');
+    btn.classList.add('press');
+    setTimeout(()=>btn.classList.remove('press'),120);
+
+    if(state.counts[active] >= s.target){
+      celebrate(s.name);
+      if(state.counts.morning>=100 && state.counts.afternoon>=100 && state.counts.night>=300){
+        state.streak = (state.streak||0)+1;
+      }
+    }
+    save();
+    render();
+  }
+
+  function resetOne(){
+    state.counts[active] = 0;
+    save();
+    render();
+  }
+
+  function celebrate(name){
+    document.getElementById('celTitle').textContent = 'أكملت هدف ' + name + '!';
+    const el = document.getElementById('celebrate');
+    el.classList.add('show');
+    setTimeout(()=>el.classList.remove('show'), 2500);
+  }
+
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(()=>t.classList.remove('show'), 2200);
+  }
+
+  /* ---------- History modal ---------- */
+  function renderHistory(){
+    const hist = loadHistory();
+    const el = document.getElementById('historyList');
+    if(hist.length === 0){
+      el.innerHTML = '<div class="hist-empty">Weli taariikh ma jirto — bilow maanta 🌸</div>';
+      return;
+    }
+    el.innerHTML = hist.map(h => `
+      <div class="hist-item">
+        <div class="hist-date">${h.date}</div>
+        <div class="hist-sessions">
+          <span class="hist-chip ${h.counts.morning>=100?'done':''}">🌅 ${h.counts.morning}</span>
+          <span class="hist-chip ${h.counts.afternoon>=100?'done':''}">☀️ ${h.counts.afternoon}</span>
+          <span class="hist-chip ${h.counts.night>=300?'done':''}">🌙 ${h.counts.night}</span>
+        </div>
+      </div>
+    `).join('');
+  }
+  document.getElementById('historyBtn').addEventListener('click', () => {
+    renderHistory();
+    document.getElementById('historyModal').classList.add('show');
+  });
+  document.getElementById('historyClose').addEventListener('click', () => {
+    document.getElementById('historyModal').classList.remove('show');
+  });
+  document.getElementById('historyModal').addEventListener('click', (e) => {
+    if(e.target.id === 'historyModal') e.currentTarget.classList.remove('show');
+  });
+
+  /* ---------- Reminders (per session) + sound ---------- */
+  const REM_KEY = 'salawat_reminders';
+  function loadReminders(){
+    try { return JSON.parse(localStorage.getItem(REM_KEY)) || {}; } catch(e){ return {}; }
+  }
+  function applyReminderFields(){
+    const rem = loadReminders();
+    SESSIONS.forEach(s => {
+      const cfg = rem[s.id] || {};
+      document.getElementById('time-'+s.id).value = cfg.time || document.getElementById('time-'+s.id).value;
+      document.getElementById('en-'+s.id).checked = !!cfg.enabled;
+    });
+  }
+  applyReminderFields();
+
+  document.getElementById('reminderScrollBtn').addEventListener('click', () => {
+    document.getElementById('reminderCard').scrollIntoView({ behavior:'smooth', block:'center' });
+  });
+
+  async function ensureNotifPermission(){
+    if(!('Notification' in window)) return false;
+    if(Notification.permission === 'granted') return true;
+    if(Notification.permission === 'denied') return false;
+    const p = await Notification.requestPermission();
+    return p === 'granted';
+  }
+
+  document.getElementById('saveRem').addEventListener('click', async () => {
+    const rem = {};
+    let anyEnabled = false;
+    SESSIONS.forEach(s => {
+      const enabled = document.getElementById('en-'+s.id).checked;
+      const time = document.getElementById('time-'+s.id).value;
+      rem[s.id] = { enabled, time };
+      if(enabled) anyEnabled = true;
+    });
+    if(anyEnabled){
+      const ok = await ensureNotifPermission();
+      if(!ok) toast('Ogolaanshaha ogeysiisyada lama siin — codka xasuusinta ayaa dhici doona marka app furan yahay.');
+    }
+    localStorage.setItem(REM_KEY, JSON.stringify(rem));
+    toast('Xasuusinta waa la kaydiyay ✓');
+  });
+
+  /* chime sound via Web Audio API */
+  function playChime(){
+    try{
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const notes = [880, 1108.7];
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        const start = ctx.currentTime + i*0.18;
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.22, start+0.03);
+        gain.gain.exponentialRampToValueAtTime(0.001, start+0.9);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(start);
+        osc.stop(start+0.9);
+      });
+    }catch(e){}
+  }
+  function speakReminder(sessionLabelAr){
+    if(!('speechSynthesis' in window)) return;
+    try{
+      const utter = new SpeechSynthesisUtterance('حان وقت الصلاة على النبي، صلِّ على محمد ﷺ');
+      const voices = speechSynthesis.getVoices();
+      const v = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ar'));
+      if(v) utter.voice = v;
+      utter.lang = v ? v.lang : 'ar-SA';
+      utter.rate = 0.85;
+      speechSynthesis.speak(utter);
+    }catch(e){}
+  }
+
+  const firedToday = {};
+  function checkReminders(){
+    const rem = loadReminders();
+    const now = new Date();
+    const hhmm = now.toTimeString().slice(0,5);
+    const dkey = todayKey();
+    SESSIONS.forEach(s => {
+      const cfg = rem[s.id];
+      if(!cfg || !cfg.enabled) return;
+      const fireKey = s.id + dkey + cfg.time;
+      if(cfg.time === hhmm && firedToday[fireKey] !== true){
+        firedToday[fireKey] = true;
+        playChime();
+        speakReminder(s.label);
+        if('Notification' in window && Notification.permission === 'granted'){
+          new Notification('🔔 Xasuusinta Salawaatka — ' + s.label, {
+            body: 'Waqtigii ' + s.label + ' ee Salawaatka ayaa gaadhay.',
+            icon: 'icon-192.png'
+          });
+        } else {
+          toast('🔔 Waqtigii ' + s.label + ' ee Salawaatka ayaa gaadhay');
+        }
+      }
+    });
+  }
+  setInterval(checkReminders, 20000);
+
+  /* ---------- iOS install banner ---------- */
+  function isIOS(){
+    return /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  }
+  function isStandalone(){
+    return window.navigator.standalone === true ||
+      window.matchMedia('(display-mode: standalone)').matches;
+  }
+  if(isIOS() && !isStandalone() && !localStorage.getItem('salawat_ios_banner_dismissed')){
+    document.getElementById('iosBanner').classList.add('show');
+  }
+  document.getElementById('iosBannerClose').addEventListener('click', () => {
+    document.getElementById('iosBanner').classList.remove('show');
+    localStorage.setItem('salawat_ios_banner_dismissed', '1');
+  });
+
+  /* ---------- Android/Chrome install prompt ---------- */
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e)=>{
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('install').style.display = 'block';
+  });
+  document.getElementById('install').addEventListener('click', async ()=>{
+    if(!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    document.getElementById('install').style.display = 'none';
+  });
+
+  /* ---------- Real Service Worker (external file) ---------- */
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(()=>{});
+    });
+  }
+
+  load();
+  render();
+</script>
+</body>
+</html>
